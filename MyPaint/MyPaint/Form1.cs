@@ -13,7 +13,7 @@ namespace MyPaint
 {
     public partial class Form1 : Form
     {
-        private string state = "";
+        private string state = "Select";
         private FigureManager figureManager;
         private Dictionary<String, Creator> creatorDictionary;
         public Form1()
@@ -53,12 +53,16 @@ namespace MyPaint
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
+            figureManager.MouseDown();
             if (creatorDictionary[state] != null)
             {
                 figureManager.Add(creatorDictionary[state].CreateFigure(e.X, e.Y, 40, 50));
             }
             else if (figureManager.GetFigure(e.X, e.Y) != null)
+            {
                 figureManager.Manipulator.Attach(figureManager.GetFigure(e.X, e.Y));
+                figureManager.Manipulator.SetTouchPoint(e.X, e.Y);
+            }
             else
                 figureManager.Manipulator.Attach(null);
             Refresh();
@@ -67,6 +71,20 @@ namespace MyPaint
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (figureManager.Manipulator.Selected != null && figureManager.MouseIsDown)
+            {
+                figureManager.Manipulator.Drag(e.X, e.Y);
+                Refresh();
+            }
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            figureManager.MouseUp();
         }
     }
 }

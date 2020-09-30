@@ -12,11 +12,30 @@ namespace MyPaint
     {
         private List<Figure> figures;
         private Manipulator manipulator;
+        private bool mouseDown = false;
 
         public FigureManager()
         {
             manipulator = new Manipulator();
             figures = new List<Figure>();
+        }
+        
+        public bool MouseIsDown
+        {
+            get
+            {
+                return mouseDown;
+            }
+        }
+
+        public void MouseDown()
+        {
+            mouseDown = true;
+        }
+
+        public void MouseUp()
+        {
+            mouseDown = false;
         }
 
         public void Add(Figure figure)
