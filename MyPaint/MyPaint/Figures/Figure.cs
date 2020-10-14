@@ -17,35 +17,11 @@ namespace MyPaint.Figures
             get => pen;
             set => pen = value;
         }
-        public float getX
-        {
-            get
-            {
-                return x;
-            }
-        }
+        public float getX => x;
 
-        public float getY
-        {
-            get
-            {
-                return y;
-            }
-        }
-        public float getWidth
-        {
-            get
-            {
-                return width;
-            }
-        }
-        public float getHeight
-        {
-            get
-            {
-                return height;
-            }
-        }
+        public float getY => y;
+        public float getWidth => width;
+        public float getHeight => height;
 
         public virtual bool touch(float x, float y)
         {
@@ -64,8 +40,8 @@ namespace MyPaint.Figures
 
         public virtual void Resize(float width, float height)
         {
-            this.width = width;
-            this.height = height;
+            this.width = Math.Abs(width);
+            this.height = Math.Abs(height);
         }
 
         public virtual void Draw(Graphics graphics)

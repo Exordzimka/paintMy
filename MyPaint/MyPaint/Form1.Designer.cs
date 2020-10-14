@@ -23,8 +23,8 @@
         #region Код, автоматически созданный конструктором форм Windows
 
         /// <summary>
-        /// Требуемый метод для поддержки конструктора — не изменяйте 
-        /// содержимое этого метода с помощью редактора кода.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -38,14 +38,14 @@
             this.Rectangle = new System.Windows.Forms.ToolStripButton();
             this.Ellipse = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1027, 24);
@@ -54,8 +54,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -63,17 +62,13 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.SelectB,
-            this.toolStripSeparator1,
-            this.Rectangle,
-            this.Ellipse});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.SelectB, this.toolStripSeparator1, this.Rectangle, this.Ellipse});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1027, 25);
@@ -83,7 +78,7 @@
             // SelectB
             // 
             this.SelectB.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.SelectB.Image = ((System.Drawing.Image)(resources.GetObject("SelectB.Image")));
+            this.SelectB.Image = ((System.Drawing.Image) (resources.GetObject("SelectB.Image")));
             this.SelectB.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SelectB.Name = "SelectB";
             this.SelectB.Size = new System.Drawing.Size(23, 22);
@@ -98,7 +93,7 @@
             // Rectangle
             // 
             this.Rectangle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Rectangle.Image = ((System.Drawing.Image)(resources.GetObject("Rectangle.Image")));
+            this.Rectangle.Image = ((System.Drawing.Image) (resources.GetObject("Rectangle.Image")));
             this.Rectangle.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Rectangle.Name = "Rectangle";
             this.Rectangle.Size = new System.Drawing.Size(23, 22);
@@ -108,7 +103,7 @@
             // Ellipse
             // 
             this.Ellipse.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Ellipse.Image = ((System.Drawing.Image)(resources.GetObject("Ellipse.Image")));
+            this.Ellipse.Image = ((System.Drawing.Image) (resources.GetObject("Ellipse.Image")));
             this.Ellipse.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Ellipse.Name = "Ellipse";
             this.Ellipse.Size = new System.Drawing.Size(23, 22);
@@ -127,11 +122,20 @@
             this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
             this.panel1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseUp);
             // 
+            // treeView1
+            // 
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.treeView1.Location = new System.Drawing.Point(0, 49);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(106, 510);
+            this.treeView1.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1027, 559);
+            this.Controls.Add(this.treeView1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -144,20 +148,20 @@
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
-        #endregion
-
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton SelectB;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton Rectangle;
         private System.Windows.Forms.ToolStripButton Ellipse;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripButton Rectangle;
+        private System.Windows.Forms.ToolStripButton SelectB;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.TreeView treeView1;
+
+        #endregion
     }
 }
 

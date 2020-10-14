@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using MyPaint.Figures;
 using MyPaint.Selecting;
 using System.Drawing;
@@ -7,18 +9,20 @@ namespace MyPaint
 {
     class Manipulator : Figure
     {
-        private float xTouch, yTouch;
+        private PointF pointTouch;
         private Figure selected;
         private float different = 3;
         List<Handler> handlers;
+        private Handler selectedHandler;
         public Manipulator()
         {
             handlers = new List<Handler>(5);
             for (int i = 0; i < 5; i++)
             {
                 handlers.Add(new Handler());
+                handlers[i].SetEdge((Handler.Edges)i);
             }
-           
+            
             Pen = new Pen(Color.Blue);
         }
 
@@ -29,8 +33,8 @@ namespace MyPaint
             selected = figure;
             if (selected != null)
             {
-                Move(selected.getX - different, selected.getY - different);
                 Resize(selected.getWidth + different * 2, selected.getHeight + different * 2);
+                Move(selected.getX - different, selected.getY - different);
             }
         }
 
@@ -48,43 +52,143 @@ namespace MyPaint
 
         public void Drag(float x, float y)
         {
-            float dx = x - xTouch;
-            float dy = y - yTouch;
-            xTouch = x;
-            yTouch = y;
-            Move(getX + dx, getY + dy);
-            Update();
+            if (GetSelectedHandler == null) return;
+            PointF pointDiff = new PointF(x-GetTouchPoint().X, y-GetTouchPoint().Y);
+            SetTouchPoint(x,y);
+            switch (GetSelectedHandler.GetEdge)
+            {
+                case Handler.Edges.Center:
+                    Move(getX + pointDiff.X, getY + pointDiff.Y);
+                    break;
+                case Handler.Edges.TopLeft:
+                    Move(getX + pointDiff.X, getY + pointDiff.Y);
+                    Resize(getWidth - pointDiff.X, getHeight - pointDiff.Y);
+                    break;
+                case Handler.Edges.TopRight:
+                    Move(getX, getY + pointDiff.Y);
+                    Resize(getWidth + pointDiff.X, getHeight - pointDiff.Y);
+                    break;
+                case Handler.Edges.BotLeft:
+                    Move(getX + pointDiff.X, getY);
+                    Resize(getWidth - pointDiff.X, getHeight + pointDiff.Y);
+                    break;
+                case Handler.Edges.BotRight:
+                    Move(getX, getY);
+                    Resize(getWidth + pointDiff.X, getHeight + pointDiff.Y);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        public void Update()
+        public Handler GetSelectedHandler => selectedHandler;
+
+        public List<Handler> GetHandlers => handlers;
+
+        public void SetSelectedHandler(Figure selectedFigure)
         {
-            Selected.Move(getX+different, getY+different);
+            selectedHandler = (Handler)selectedFigure;
         }
 
         public void SetTouchPoint(float x, float y)
         {
-            xTouch = x;
-            yTouch = y;
+            pointTouch.X = x;
+            pointTouch.Y = y;
         }
 
+        public PointF GetTouchPoint()
+        {
+            return pointTouch;
+        }
+        
         public override void Move(float x, float y)
         {
             base.Move(x, y);
-            moveHandlers();
+            selected.Move(x+different, y+different);
+            MoveHandlers();
         }
 
-        private void moveHandlers()
+        public override void Resize(float width, float height)
         {
-            handlers[0].Move(getX + getWidth / 2 - handlers[0].getWidth / 2,
-                   getY + getHeight / 2 - handlers[0].getHeight / 2);
-            handlers[1].Move(getX - handlers[0].getWidth / 2,
-                    getY - handlers[0].getHeight / 2);
-            handlers[2].Move(getX + getWidth - handlers[0].getWidth / 2,
-                    getY - handlers[0].getHeight / 2);
-            handlers[3].Move(getX + getWidth - handlers[0].getWidth / 2,
-                    getY + getHeight - handlers[0].getHeight / 2);
-            handlers[4].Move(getX - handlers[0].getWidth / 2,
-                    getY + getHeight - handlers[0].getHeight / 2);
+            if(selected.getWidth<=0 || selected.getHeight <= 0)
+                ChangesHandlesEdges();
+            base.Resize(width, height);
+            selected.Resize(width-different*2, height-different*2);
+            MoveHandlers();
+        }
+
+        private void MoveHandlers()
+        {
+            foreach (var handler in handlers)
+            {
+                PointF point = GetEdgeCoordinate(handler.GetEdge);
+                handler.Move(point.X, point.Y);
+            }
+        }
+
+        private void ChangesHandlesEdges()
+        {
+            PointF center = GetEdgeCoordinate(Handler.Edges.Center);
+            foreach (var handler in handlers)
+            {
+                handler.SetEdge(whichEdgeCloser(handler.GetCenter));
+            }
+            MoveHandlers();
+        }
+
+        private Handler.Edges whichEdgeCloser(PointF coordinates)
+        {
+            float different = float.MaxValue;
+            Handler.Edges closestEdge = Handler.Edges.Center;
+            foreach (Handler.Edges edge in Enum.GetValues(typeof(Handler.Edges)))
+            {
+                PointF currentEdge = GetEdgeCoordinate(edge);
+                float lenOfLine = GetLenOfLine(coordinates, currentEdge);
+                if (lenOfLine < different)
+                {
+                    closestEdge = edge;
+                    different = lenOfLine;
+                }
+            }
+
+            return closestEdge;
+        }
+        
+        private PointF GetEdgeCoordinate(Handler.Edges edge)
+        {
+            PointF coordinates;
+            switch (edge)
+            {
+                case Handler.Edges.Center:
+                    coordinates = new PointF(getX + getWidth / 2 - Handler.GetDiameter/2,
+                    getY + getHeight / 2 - Handler.GetDiameter/2);
+                    break;
+                case Handler.Edges.TopLeft:
+                    coordinates = new PointF(getX - Handler.GetDiameter/2,
+                        getY - Handler.GetDiameter/2);
+                    break;
+                case Handler.Edges.TopRight:
+                    coordinates = new PointF(getX + getWidth - Handler.GetDiameter/2,
+                        getY - Handler.GetDiameter/2);
+                    break;
+                case Handler.Edges.BotRight:
+                    coordinates = new PointF(getX + getWidth - Handler.GetDiameter/2,
+                        getY + getHeight - Handler.GetDiameter/2);
+                    break;
+                case Handler.Edges.BotLeft:
+                    coordinates = new PointF(getX - Handler.GetDiameter/2,
+                        getY + getHeight - Handler.GetDiameter/2);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(edge), edge, null);
+            }
+
+            return coordinates;
+        }
+
+        private float GetLenOfLine(PointF start, PointF end)
+        {
+            return (float) Math.Sqrt(Math.Pow(end.X - start.X, 2) + Math.Pow(end.Y - start.X, 2));
         }
     }
 }

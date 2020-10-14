@@ -5,6 +5,7 @@ using MyPaint.Figures;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MyPaint.Selecting;
 
 namespace MyPaint
 {
@@ -12,21 +13,16 @@ namespace MyPaint
     {
         private List<Figure> figures;
         private Manipulator manipulator;
-        private bool mouseDown = false;
+        private bool mouseDown;
 
         public FigureManager()
         {
             manipulator = new Manipulator();
             figures = new List<Figure>();
+            figures.AddRange(manipulator.GetHandlers);
         }
         
-        public bool MouseIsDown
-        {
-            get
-            {
-                return mouseDown;
-            }
-        }
+        public bool MouseIsDown => mouseDown;
 
         public void MouseDown()
         {
@@ -54,7 +50,8 @@ namespace MyPaint
                 manipulator.Draw(graphics);
             foreach (Figure figure in figures)
             {
-                figure.Draw(graphics);
+                if(!(figure is Handler))
+                    figure.Draw(graphics);
             }
         }
 
@@ -68,5 +65,7 @@ namespace MyPaint
 
             return null;
         }
+
+        public List<Figure> getFigures() => figures;
     }
 }

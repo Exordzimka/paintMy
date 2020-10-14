@@ -16,14 +16,11 @@ namespace MyPaint.Figures
 
         public override bool touch(float x, float y)
         {
-            if (Math.Pow((x - getCenter.X), 2) / Math.Pow(getBigHalfShaft, 2) + Math.Pow((y - getCenter.Y), 2) / Math.Pow(getSmallHalfShaft, 2) <= 1)
-                return true;
-            else
-                return false;
-
+            return Math.Pow((x - GetCenter.X), 2) / Math.Pow(getBigHalfShaft, 2) + 
+                Math.Pow((y - GetCenter.Y), 2) / Math.Pow(getSmallHalfShaft, 2) <= 1;
         }
 
-        private PointF getCenter
+        public PointF GetCenter
         {
             get
             {
@@ -40,8 +37,7 @@ namespace MyPaint.Figures
             {
                 if (getWidth > getHeight)
                     return getWidth / 2;
-                else
-                    return getHeight;
+                return getHeight;
             }
         }
 
@@ -51,8 +47,7 @@ namespace MyPaint.Figures
             {
                 if (getWidth < getHeight)
                     return getWidth / 2;
-                else
-                    return getHeight;
+                return getHeight;
             }
         }
     }

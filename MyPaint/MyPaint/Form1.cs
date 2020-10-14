@@ -8,14 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MyPaint.Creators;
+using MyPaint.Figures;
+using MyPaint.Selecting;
 
 namespace MyPaint
 {
     public partial class Form1 : Form
     {
         private string state = "Select";
-        private FigureManager figureManager;
-        private Dictionary<String, Creator> creatorDictionary;
+        private readonly FigureManager figureManager;
+        private readonly Dictionary<string, Creator> creatorDictionary;
         public Form1()
         {
             InitializeComponent();
@@ -24,7 +26,6 @@ namespace MyPaint
             creatorDictionary.Add("Rectangle", new RectangleCreator());
             creatorDictionary.Add("Ellipse", new EllipseCreator());
             creatorDictionary.Add("Select", null);
-
         }
 
         private void Rectangle_Click_1(object sender, EventArgs e)
@@ -54,13 +55,22 @@ namespace MyPaint
         private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
             figureManager.MouseDown();
+            figureManager.Manipulator.SetSelectedHandler(null);
+            Figure selectedFigure = figureManager.GetFigure(e.X, e.Y);
             if (creatorDictionary[state] != null)
             {
                 figureManager.Add(creatorDictionary[state].CreateFigure(e.X, e.Y, 40, 50));
+                treeView1.Nodes.Add(new TreeNode(figureManager.getFigures().Last().GetType().Name));
             }
-            else if (figureManager.GetFigure(e.X, e.Y) != null)
+            else if (selectedFigure != null && !(selectedFigure is Handler))
             {
                 figureManager.Manipulator.Attach(figureManager.GetFigure(e.X, e.Y));
+                figureManager.Manipulator.SetSelectedHandler(figureManager.Manipulator.GetHandlers[0]);
+                figureManager.Manipulator.SetTouchPoint(e.X, e.Y);
+            }
+            else if (selectedFigure != null)
+            {
+                figureManager.Manipulator.SetSelectedHandler(selectedFigure);
                 figureManager.Manipulator.SetTouchPoint(e.X, e.Y);
             }
             else

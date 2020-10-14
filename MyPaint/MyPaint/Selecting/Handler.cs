@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 using MyPaint.Figures;
 
 namespace MyPaint.Selecting
 {
     public class Handler : Ellipse
     {
-        private PointF startPoint = new PointF();
-        private float diameter = 5;
+        private PointF startPoint;
+        private static float diameter = 5;
         SolidBrush solidBrush;
+        private Edges edge;
         public Handler()
         {
             Pen = new Pen(Color.Blue);
@@ -26,18 +22,6 @@ namespace MyPaint.Selecting
             graphics.FillEllipse(solidBrush, getX, getY, getWidth, getHeight);
         }
 
-        public void Drag(float x, float y)
-        {
-            float dx = x - startPoint.X;
-            float dy = y - startPoint.Y;
-
-        }
-
-        public void Update()
-        {
-
-        }
-
         public override bool touch(float x, float y)
         {
             startPoint.X = x;
@@ -45,5 +29,22 @@ namespace MyPaint.Selecting
             return base.touch(x, y);
         }
 
+        public Edges GetEdge => edge;
+
+        public void SetEdge(Edges edge)
+        {
+            this.edge = edge;
+        }
+
+        public enum Edges
+        {
+            Center,
+            TopLeft,
+            TopRight,
+            BotRight,
+            BotLeft
+        }
+
+        public static float GetDiameter => diameter;
     }
 }
