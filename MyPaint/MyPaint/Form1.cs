@@ -25,6 +25,7 @@ namespace MyPaint
             creatorDictionary = new Dictionary<string, Creator>();
             creatorDictionary.Add("Rectangle", new RectangleCreator());
             creatorDictionary.Add("Ellipse", new EllipseCreator());
+            creatorDictionary.Add("Composite", new CompositeCreator());
             creatorDictionary.Add("Select", null);
         }
 
@@ -54,6 +55,7 @@ namespace MyPaint
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
+            
             figureManager.MouseDown();
             figureManager.Manipulator.SetSelectedHandler(null);
             Figure selectedFigure = figureManager.GetFigure(e.X, e.Y);
@@ -95,6 +97,24 @@ namespace MyPaint
         private void panel1_MouseUp(object sender, MouseEventArgs e)
         {
             figureManager.MouseUp();
+        }
+
+        private void Composite_Click(object sender, EventArgs e)
+        {
+            state = "Composite";
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyValue == 17)
+                figureManager.CtrlDown();
+        }
+
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyValue == 17 && figureManager.CtrlIsDown)
+                figureManager.CtrlUp();
         }
     }
 }

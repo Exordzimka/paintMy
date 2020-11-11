@@ -7,7 +7,7 @@ using MyPaint.Figures;
 
 namespace MyPaint.Creators
 {
-    class Creator
+    public class Creator
     {
         public virtual Figure CreateFigure(float x, float y, float width, float height)
         {

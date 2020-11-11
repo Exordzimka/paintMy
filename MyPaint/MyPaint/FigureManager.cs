@@ -14,15 +14,31 @@ namespace MyPaint
         private List<Figure> figures;
         private Manipulator manipulator;
         private bool mouseDown;
+        private bool ctrlDown;
+        private Composite tempGroup; 
 
         public FigureManager()
         {
+            tempGroup = new Composite();
             manipulator = new Manipulator();
             figures = new List<Figure>();
             figures.AddRange(manipulator.GetHandlers);
+            figures.Add(tempGroup);
         }
         
         public bool MouseIsDown => mouseDown;
+
+        public bool CtrlIsDown => ctrlDown;
+
+        public void CtrlDown()
+        {
+            ctrlDown = true;
+        }
+
+        public void CtrlUp()
+        {
+            ctrlDown = false;
+        }
 
         public void MouseDown()
         {
@@ -60,7 +76,14 @@ namespace MyPaint
             for (int i = figures.Count - 1; i >= 0; i--)
             {
                 if (figures[i].touch(x, y))
+                {
+                    if (CtrlIsDown)
+                    {
+                        tempGroup.AddFigure(figures[i]);
+                        return tempGroup;
+                    }
                     return figures[i];
+                }
             }
 
             return null;

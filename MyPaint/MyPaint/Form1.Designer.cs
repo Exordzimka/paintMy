@@ -37,6 +37,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.Rectangle = new System.Windows.Forms.ToolStripButton();
             this.Ellipse = new System.Windows.Forms.ToolStripButton();
+            this.Composite = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.menuStrip1.SuspendLayout();
@@ -68,7 +69,7 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.SelectB, this.toolStripSeparator1, this.Rectangle, this.Ellipse});
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.SelectB, this.toolStripSeparator1, this.Rectangle, this.Ellipse, this.Composite});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1027, 25);
@@ -110,6 +111,16 @@
             this.Ellipse.Text = "toolStripButton3";
             this.Ellipse.Click += new System.EventHandler(this.Ellipse_Click_1);
             // 
+            // Composite
+            // 
+            this.Composite.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.Composite.Image = ((System.Drawing.Image) (resources.GetObject("Composite.Image")));
+            this.Composite.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Composite.Name = "Composite";
+            this.Composite.Size = new System.Drawing.Size(23, 22);
+            this.Composite.Text = "Composite";
+            this.Composite.Click += new System.EventHandler(this.Composite_Click);
+            // 
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -139,9 +150,12 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
@@ -150,6 +164,7 @@
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.ToolStripButton Composite;
         private System.Windows.Forms.ToolStripButton Ellipse;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;

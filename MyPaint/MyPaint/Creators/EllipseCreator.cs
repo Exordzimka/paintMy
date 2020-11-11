@@ -7,7 +7,7 @@ using MyPaint.Figures;
 
 namespace MyPaint.Creators
 {
-    class EllipseCreator : Creator
+    public class EllipseCreator : Creator
     {
         public override Figures.Figure CreateFigure(float x, float y, float width, float height)
         {

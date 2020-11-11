@@ -46,10 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Creators\CompositeCreator.cs" />
     <Compile Include="Creators\Creator.cs" />
     <Compile Include="Creators\EllipseCreator.cs" />
     <Compile Include="Creators\RectangleCreator.cs" />
     <Compile Include="FigureManager.cs" />
+    <Compile Include="Figures\Composite.cs" />
     <Compile Include="Figures\Ellipse.cs" />
     <Compile Include="Figures\Figure.cs" />
     <Compile Include="Figures\Rectangle.cs" />

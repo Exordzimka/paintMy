@@ -110,8 +110,6 @@ namespace MyPaint
 
         public override void Resize(float width, float height)
         {
-            if(selected.getWidth<=0 || selected.getHeight <= 0)
-                ChangesHandlesEdges();
             base.Resize(width, height);
             selected.Resize(width-different*2, height-different*2);
             MoveHandlers();
@@ -131,12 +129,12 @@ namespace MyPaint
             PointF center = GetEdgeCoordinate(Handler.Edges.Center);
             foreach (var handler in handlers)
             {
-                handler.SetEdge(whichEdgeCloser(handler.GetCenter));
+                handler.SetEdge(whichEdgeCloser(handler.GetCenter, handler.GetEdge));
             }
             MoveHandlers();
         }
 
-        private Handler.Edges whichEdgeCloser(PointF coordinates)
+        private Handler.Edges whichEdgeCloser(PointF coordinates, Handler.Edges handlerEdge)
         {
             float different = float.MaxValue;
             Handler.Edges closestEdge = Handler.Edges.Center;
