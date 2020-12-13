@@ -13,6 +13,15 @@ namespace MyPaint.Figures
         {
             graphics.DrawRectangle(Pen, getX, getY, getWidth, getHeight);
         }
+        
+        public override Figure Clone()
+        {
+            Rectangle clonedFigure = new Rectangle();
+            clonedFigure.Move(getX, getY);
+            clonedFigure.Resize(getWidth, getHeight);
+            clonedFigure.Pen = new Pen(Pen.Color);
+            return clonedFigure;
+        }
 
     }
 }

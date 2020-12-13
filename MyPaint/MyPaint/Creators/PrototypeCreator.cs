@@ -1,18 +1,17 @@
-﻿using MyPaint.Figures;
+﻿using System.Collections.Generic;
+using MyPaint.Figures;
 
 namespace MyPaint.Creators
 {
-    public class CompositeCreator : Creator
+    public class PrototypeCreator : Creator
     {
         private Figure rememberedComposite; 
         public override Figure CreateFigure(float x, float y, float width, float height)
         {
-            Composite composite = new Composite();
-            if (rememberedComposite != null)
-                return rememberedComposite;
-            return composite;
+            rememberedComposite.Move(x,y);
+            return rememberedComposite;
         }
-        
+
         public void RememberComposite(Figure figure)
         {
             rememberedComposite = figure.Clone();

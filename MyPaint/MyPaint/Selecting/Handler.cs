@@ -22,11 +22,11 @@ namespace MyPaint.Selecting
             graphics.FillEllipse(solidBrush, getX, getY, getWidth, getHeight);
         }
 
-        public override bool touch(float x, float y)
+        public override bool Touch(float x, float y)
         {
             startPoint.X = x;
             startPoint.Y = y;
-            return base.touch(x, y);
+            return base.Touch(x, y);
         }
 
         public Edges GetEdge => edge;

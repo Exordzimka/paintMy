@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 
 namespace MyPaint.Figures
@@ -23,7 +19,7 @@ namespace MyPaint.Figures
         public float getWidth => width;
         public float getHeight => height;
 
-        public virtual bool touch(float x, float y)
+        public virtual bool Touch(float x, float y)
         {
             if (x >= getX && x <= getX + getWidth &&
                y >= getY && y <= getY + getHeight)
@@ -47,6 +43,15 @@ namespace MyPaint.Figures
         public virtual void Draw(Graphics graphics)
         {
 
+        }
+
+        public virtual Figure Clone()
+        {
+            Figure clonedFigure = new Figure();
+            clonedFigure.Move(getX, getY);
+            clonedFigure.Resize(getWidth, getHeight);
+            clonedFigure.Pen = new Pen(pen.Color);
+            return clonedFigure;
         }
     }
 }

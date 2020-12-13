@@ -14,10 +14,10 @@ namespace MyPaint.Figures
             graphics.DrawEllipse(Pen, getX, getY, getWidth, getHeight);
         }
 
-        public override bool touch(float x, float y)
+        public override bool Touch(float x, float y)
         {
-            return Math.Pow((x - GetCenter.X), 2) / Math.Pow(getBigHalfShaft, 2) + 
-                Math.Pow((y - GetCenter.Y), 2) / Math.Pow(getSmallHalfShaft, 2) <= 1;
+            return Math.Pow((x - GetCenter.X), 2) / Math.Pow(GetBigHalfShaft, 2) + 
+                Math.Pow((y - GetCenter.Y), 2) / Math.Pow(GetSmallHalfShaft, 2) <= 1;
         }
 
         public PointF GetCenter
@@ -31,7 +31,7 @@ namespace MyPaint.Figures
             }
         }
 
-        private float getBigHalfShaft
+        private float GetBigHalfShaft
         {
             get
             {
@@ -41,7 +41,7 @@ namespace MyPaint.Figures
             }
         }
 
-        private float getSmallHalfShaft
+        private float GetSmallHalfShaft
         {
             get
             {
@@ -49,6 +49,15 @@ namespace MyPaint.Figures
                     return getWidth / 2;
                 return getHeight;
             }
+        }
+        
+        public override Figure Clone()
+        {
+            Ellipse clonedFigure = new Ellipse();
+            clonedFigure.Move(getX, getY);
+            clonedFigure.Resize(getWidth, getHeight);
+            clonedFigure.Pen = new Pen(Pen.Color);
+            return clonedFigure;
         }
     }
 }

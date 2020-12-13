@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using MyPaint.Figures;
 
-namespace MyPaint
+namespace MyPaint.Figures
 {
     public class Composite : Figure
     {
-        List<Figure> figures = new List<Figure>();
-        public override bool touch(float x, float y)
+        private readonly List<Figure> figures = new List<Figure>();
+        public override bool Touch(float x, float y)
         {
-            foreach (var figure in figures)
-            {
-                if (figure.touch(x, y))
-                    return true;
-            }
-
-            return false;
+            return figures.Any(figure => figure.Touch(x, y));
         }
+
+        public List<Figure> Figures => figures;
 
         public override void Move(float x, float y)
         {
-            float kx = x - getX;
-            float ky = y - getY;
+            var kx = x - getX;
+            var ky = y - getY;
             foreach (var figure in figures)
             {
                 figure.Move(figure.getX + kx/*x-getX*/,figure.getY + ky/*y-getY*/);
@@ -71,28 +65,51 @@ namespace MyPaint
                 if(figure == this)
                     return;
                 figures.Add(figure);
-                float rightBorderOfLastFigure = figure.getX + figure.getWidth;
-                float bottomBorderOfLastFigure = figure.getY + figure.getHeight;
-                float leftBorderOfLastFigure = figure.getX;
-                float topBorderOfLastFigure = figure.getY;
-                float rightBorderOfComposite = getX + getWidth;
-                float bottomBorderOfComposite = getY + getHeight;
-                float leftBorderOfComposite = getX;
-                float topBorderOfComposite = getY;
+                var rightBorderOfLastFigure = figure.getX + figure.getWidth;
+                var bottomBorderOfLastFigure = figure.getY + figure.getHeight;
+                var leftBorderOfLastFigure = figure.getX;
+                var topBorderOfLastFigure = figure.getY;
+                var rightBorderOfComposite = getX + getWidth;
+                var bottomBorderOfComposite = getY + getHeight;
+                var leftBorderOfComposite = getX;
+                var topBorderOfComposite = getY;
+                if (leftBorderOfLastFigure < leftBorderOfComposite)
+                {
+                    base.Move(leftBorderOfLastFigure,getY);
+                    base.Resize(rightBorderOfComposite-getX, bottomBorderOfComposite-getY);
+                }
+
+                if (topBorderOfLastFigure < topBorderOfComposite)
+                {
+                    base.Move(getX, topBorderOfLastFigure);
+                    base.Resize(rightBorderOfComposite-getX, bottomBorderOfComposite-getY);
+                }
                 if(rightBorderOfLastFigure>rightBorderOfComposite)
                     base.Resize( rightBorderOfLastFigure-getX, getHeight);
                 if(bottomBorderOfLastFigure>bottomBorderOfComposite)
                     base.Resize(getWidth, bottomBorderOfLastFigure-getY);
-                if(leftBorderOfLastFigure<leftBorderOfComposite)
-                    base.Move(leftBorderOfLastFigure,getY);
-                if (topBorderOfLastFigure < topBorderOfComposite)
-                    base.Move(getX, topBorderOfLastFigure);
+                
             }
         }
 
         public void Clear()
         {
             figures.Clear();
+            base.Move(0,0);
+            base.Resize(0,0);
+        }
+
+        public override Figure Clone()
+        {
+            Composite clonedFigure = new Composite();
+            clonedFigure.Move(getX, getY);
+            clonedFigure.Resize(getWidth, getHeight);
+            clonedFigure.Pen = new Pen(Pen.Color);
+            foreach (var figure in Figures)
+            {
+                clonedFigure.AddFigure(figure.Clone());
+            }
+            return clonedFigure;
         }
     }
 }

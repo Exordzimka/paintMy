@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace MyPaint
 {
-    class Manipulator : Figure
+    public class Manipulator : Figure
     {
         private PointF pointTouch;
         private Figure selected;
@@ -26,7 +26,7 @@ namespace MyPaint
             Pen = new Pen(Color.Blue);
         }
 
-        public Figure Selected { get => selected; }
+        public Composite Selected { get => (Composite) selected; }
 
         public void Attach(Figure figure)
         {
