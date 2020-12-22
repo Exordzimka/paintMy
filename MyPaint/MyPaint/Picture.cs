@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using MyPaint.Figures;
 using MyPaint.Selecting;
@@ -20,7 +22,10 @@ namespace MyPaint
         private float startPositionY;
         private float startWidth;
         private float startHeight;
+        private List<Figure> figuresStartProperties;
         private readonly UndoRedo undoRedo;
+        private Stack<int> undoLevels;
+        private Stack<int> redoLevels;
 
         public Picture()
         {
@@ -31,13 +36,16 @@ namespace MyPaint
             figures = new List<Figure>();
             figures.AddRange(manipulator.GetHandlers);
             figures.Add(tempGroup);
+            undoLevels = new Stack<int>();
+            redoLevels = new Stack<int>();
+            figuresStartProperties = new List<Figure>();
         }
 
         public bool MouseIsDown => mouseDown;
 
         public bool CtrlIsDown => ctrlDown;
 
-        public Figure GetTempGroup => tempGroup;
+        public Composite GetTempGroup => tempGroup;
 
         public void CtrlDown()
         {
@@ -51,23 +59,70 @@ namespace MyPaint
 
         public void MouseDown()
         {
-            if (Manipulator.Selected != null)
-            {
-                startPositionX = Manipulator.Selected.getX;
-                startPositionY = Manipulator.Selected.getY;
-                startWidth = Manipulator.Selected.getWidth;
-                startHeight = Manipulator.Selected.getHeight;
-            }
             mouseDown = true;
         }
 
+        public void InitializeStartProperties()
+        {
+            startPositionX = Manipulator.Selected.getX;
+            startPositionY = Manipulator.Selected.getY;
+            startWidth = Manipulator.Selected.getWidth;
+            startHeight = Manipulator.Selected.getHeight;
+            figuresStartProperties.Clear();
+            foreach (var figure in Manipulator.Selected.Figures)
+            {
+                figuresStartProperties.Add(figure.Clone());
+            }
+            
+        }
+        
         public void MouseUp()
         {
             var selected = Manipulator.Selected;
-            if (ChangedPositionOfSelected())
-                undoRedo.InsertInUnDoRedoForMove(selected, selected.getX-startPositionX, selected.getY-startPositionY);
-            if(ChangedSizeOfSelected())
-                undoRedo.InsertInUnDoRedoForResize(selected, selected.getWidth-startWidth, selected.getHeight-startHeight);
+            var addedLevels = 0;
+            if (ChangedPositionOfSelected() && ChangedSizeOfSelected())
+            {
+                for(var i=0;i<selected.Figures.Count;i++)
+                {
+                    var figure = selected.Figures[i];
+                    var startFigure = figuresStartProperties[i];
+                    undoRedo.InsertInUnDoRedoForMove(figure, figure.getX-startFigure.getX, figure.getY-startFigure.getY);
+                    undoRedo.InsertInUnDoRedoForResize(figure, figure.getWidth-startFigure.getWidth, figure.getHeight-startFigure.getHeight);
+                    addedLevels += 2;
+                    redoLevels.Clear();
+                }
+                undoLevels.Push(addedLevels);
+            }
+            else
+            {
+                if (ChangedPositionOfSelected())
+                {
+                    for(var i=0;i<selected.Figures.Count;i++)
+                    {
+                        var figure = selected.Figures[i];
+                        var startFigure = figuresStartProperties[i];
+                        undoRedo.InsertInUnDoRedoForMove(figure, figure.getX-startFigure.getX, figure.getY-startFigure.getY);
+                        addedLevels += 1;
+                        redoLevels.Clear();
+                    }
+                    undoLevels.Push(addedLevels);
+                }
+                else if (ChangedSizeOfSelected())
+                {
+                    for(var i=0;i<selected.Figures.Count;i++)
+                    {
+                        var figure = selected.Figures[i];
+                        var startFigure = figuresStartProperties[i];
+                        undoRedo.InsertInUnDoRedoForResize(figure, figure.getWidth-startFigure.getWidth, figure.getHeight-startFigure.getHeight);
+                        addedLevels += 1;
+                        redoLevels.Clear();
+                    }
+                    undoLevels.Push(addedLevels);
+                }
+                
+            }
+            
+                
             mouseDown = false;
         }
 
@@ -76,7 +131,7 @@ namespace MyPaint
             var selected = Manipulator.Selected;
             if (selected == null)
                 return false;
-            return startPositionX != selected.getX || startPositionY != selected.getY;
+            return Math.Abs(startPositionX - selected.getX) > 0 || Math.Abs(startPositionY - selected.getY) > 0;
         }
 
         private bool ChangedSizeOfSelected()
@@ -84,13 +139,16 @@ namespace MyPaint
             var selected = Manipulator.Selected;
             if (selected == null)
                 return false;
-            return startWidth != selected.getWidth || startHeight != selected.getHeight;
+            return Math.Abs(startWidth - selected.getWidth) > 0 || Math.Abs(startHeight - selected.getHeight) > 0;
         }
         
-        public void Add(Figure figure)
+        public void Add(Figure figure, bool needToClear)
         {
             figures.Add(figure);
-            undoRedo.InsertInUnDoRedoForCreate(figure);
+            undoLevels.Push(1);
+            undoRedo.InsertInUnDoRedoForCreate(figure, needToClear);
+            if (needToClear)
+                redoLevels.Clear();
         }
 
         public void Remove(Figure figure)
@@ -107,10 +165,9 @@ namespace MyPaint
         {
             if (manipulator.Selected != null)
                 manipulator.Draw(graphics);
-            foreach (Figure figure in figures)
+            foreach (var figure in figures.Where(figure => !(figure is Handler)))
             {
-                if (!(figure is Handler))
-                    figure.Draw(graphics);
+                figure.Draw(graphics);
             }
         }
 
@@ -139,14 +196,7 @@ namespace MyPaint
             }
             
             if (tempGroup.Figures.Count != 0)
-            {
-                foreach (var figure in tempGroup.Figures)
-                {
-                    figures.Add(figure);
-                }
-
-                tempGroup.Clear();
-            }
+                ClearTempGroup();
 
             return null;
         }
@@ -195,12 +245,30 @@ namespace MyPaint
 
         public void Undo()
         {
-            undoRedo.Undo();
+            if (undoLevels.Count == 0) return;
+            var levels = undoLevels.Pop();
+            undoRedo.Undo(levels);
+            redoLevels.Push(levels);
+            manipulator.Attach(null);
+            ClearTempGroup();
         }
 
         public void Redo()
         {
-            undoRedo.Redo();
+            if (redoLevels.Count == 0) return;
+            var levels = redoLevels.Pop();
+            undoRedo.Redo(levels);
+            undoLevels.Push(levels);
+            ClearTempGroup();
+        }
+
+        public void ClearTempGroup()
+        {
+            foreach (var figure in tempGroup.Figures)
+            {
+                figures.Add(figure);
+            }
+            tempGroup.Clear();
         }
     }
 }

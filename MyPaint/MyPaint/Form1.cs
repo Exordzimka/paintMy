@@ -68,19 +68,20 @@ namespace MyPaint
                 {
                     if (state == "Prototype")
                     {
-                        picture.Add(creator.CreateFigure(e.X, e.Y, 0, 0).Clone());
+                        picture.Add(creator.CreateFigure(e.X, e.Y, 0, 0).Clone(), true);
                         treeView1.Nodes.Add(new TreeNode(picture.getFigures().Last().GetType().Name));
                     }
                     else
                     {
                         creator = creatorDictionary[state];
-                        picture.Add(creator.CreateFigure(e.X, e.Y, 40, 50));
+                        picture.Add(creator.CreateFigure(e.X, e.Y, 40, 50), true);
                         treeView1.Nodes.Add(new TreeNode(picture.getFigures().Last().GetType().Name));
                     }
                 }
                 else if (selectedFigure != null && !(selectedFigure is Handler))
                 {
                     picture.Manipulator.Attach(picture.GetFigure(e.X, e.Y));
+                    picture.InitializeStartProperties();
                     picture.Manipulator.SetSelectedHandler(picture.Manipulator.GetHandlers[0]);
                     picture.Manipulator.SetTouchPoint(e.X, e.Y);
                 }
@@ -117,7 +118,9 @@ namespace MyPaint
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.Z)
+            if(e.Control && e.Shift && e.KeyCode == Keys.Z)
+                picture.Redo();
+            else if (e.Control && e.KeyCode == Keys.Z)
                 picture.Undo();
             else if (e.Control)
                 picture.CtrlDown();

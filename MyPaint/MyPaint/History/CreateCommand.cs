@@ -15,7 +15,7 @@ namespace MyPaint.History
 
         public void Execute()
         {
-            picture.Add(figure);
+            picture.Add(figure, false);
         }
 
         public void UnExecute()

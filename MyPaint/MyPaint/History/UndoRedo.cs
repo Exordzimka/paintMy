@@ -10,39 +10,37 @@ namespace MyPaint.History
 
         public Picture Picture { get; set; }
 
-        public void Redo(/*int levels*/)
+        public void Redo(int levels)
         {
-            // for (int i = 1; i <= levels; i++)
-            // {
-                if (redocommands.Count != 0)
-                {
-                    ICommand command = redocommands.Pop();
-                    command.Execute();
-                    undocommands.Push(command);
-                }
-                Picture.Manipulator.Attach(null);
-            // }
+            for (var i = 0; i < levels; i++)
+            {
+                if (redocommands.Count == 0) continue;
+                var command = redocommands.Pop();
+                command.Execute();
+                undocommands.Push(command);
+            }
+            Picture.Manipulator.Attach(null);
+            
         }
 
-        public void Undo(/*int levels*/)
+        public void Undo(int levels)
         {
-            // for (int i = 1; i <= levels; i++)
-            // {
-                if (undocommands.Count != 0)
-                {
-                    ICommand command = undocommands.Pop();
-                    command.UnExecute();
-                    redocommands.Push(command);
-                }
-                Picture.Manipulator.Attach(null);
-            // }
+            for (var i = 0; i < levels; i++)
+            {
+                if (undocommands.Count == 0) continue;
+                var command = undocommands.Pop();
+                command.UnExecute();
+                redocommands.Push(command);
+            }
+            Picture.Manipulator.Attach(null);
         }
 
-        public void InsertInUnDoRedoForCreate(Figure figure)
+        public void InsertInUnDoRedoForCreate(Figure figure, bool needToClear)
         {
             ICommand cmd = new CreateCommand(Picture, figure);
             undocommands.Push(cmd);
-            redocommands.Clear();
+            if(needToClear)
+                redocommands.Clear();
         }
         
         public void InsertInUnDoRedoForMove(Figure figure, float changeX, float changeY)
